@@ -2,11 +2,9 @@ const fs = require('node:fs/promises');
 const fetch = require("node-fetch");
 const nodePandoc = require("node-pandoc");
 
-// Important constants
 const now = new Date();
 const region = 1; // EN
 
-// Bestdori URLs
 const urls = {
   "mainStories": "https://bestdori.com/api/misc/mainstories.5.json",
   "mainAssets": "https://bestdori.com/assets/en/scenario/main_rip/Scenariomain001.asset",
@@ -15,6 +13,17 @@ const urls = {
   "events": "https://bestdori.com/api/events/all.5.json",
   "eventStories": "https://bestdori.com/api/events/all.stories.json",
   "eventAssets": "https://bestdori.com/assets/en/scenario/eventstory"
+};
+
+const bands = {
+  "1": "Poppin'Party",
+  "2": "Afterglow",
+  "3": "Hello, Happy World!",
+  "4": "Pastel*Palettes",
+  "5": "Roselia",
+  "21": "Morfonica",
+  "18": "RAISE A SUILEN",
+  "45": "MyGO!!!!!"
 };
 
 const badChars = {
@@ -89,6 +98,14 @@ const makeEpub = (path, title, data) => {
   // Create initial file structure
   await mkdir("assets");
   await mkdir("Stories");
+
+  // -- Main Stories --
+  // ------------------
+  console.log("Processing Main Stories");
+
+  // -- Band Stories --
+  // ------------------
+  console.log("Processing Band Stories");
 
   // -- Event Stories --
   // -------------------
