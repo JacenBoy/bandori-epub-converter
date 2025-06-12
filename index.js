@@ -8,6 +8,10 @@ const region = 1; // EN
 
 // Bestdori URLs
 const urls = {
+  "mainStories": "https://bestdori.com/api/misc/mainstories.5.json",
+  "mainAssets": "https://bestdori.com/assets/en/scenario/main_rip/Scenariomain001.asset",
+  "bandStories": "https://bestdori.com/api/misc/bandstories.5.json",
+  "bandAssets": "https://bestdori.com/assets/en/scenario/band/001_rip/Scenarioremakestory-01.asset",
   "events": "https://bestdori.com/api/events/all.5.json",
   "eventStories": "https://bestdori.com/api/events/all.stories.json",
   "eventAssets": "https://bestdori.com/assets/en/scenario/eventstory"
@@ -74,6 +78,13 @@ const processStory = (story) => {
   return storyData;
 };
 
+const makeEpub = (path, title, data) => {
+  const pandocArgs = ["-f", "markdown", "-t", "epub", "-o", `${path}/${title.replace(badChars.windows, "_").replace(/\.$/, "")}.epub`];
+  nodePandoc(data, pandocArgs, (err, result) => {
+    if (err) return console.error(err);
+  });
+};
+
 (async () => {
   // Create initial file structure
   await mkdir("assets");
@@ -126,10 +137,7 @@ const processStory = (story) => {
         }
 
         // Create the epub file
-        const pandocArgs = ["-f", "markdown", "-t", "epub", "-o", `Stories/Event Stories/${String(eventId).padStart(3, "0")} - ${event.eventName[region].replace(badChars.windows, "_").replace(/\.$/, "")}.epub`];
-        nodePandoc(eventStoryData, pandocArgs, (err, result) => {
-          if (err) return console.error(err);
-        });
+        makeEpub("Stories/Event Stories", `${String(eventId).padStart(3, "0")} - ${event.eventName[region]}`, eventStoryData);
       } catch (ex) {
         console.error(ex);
       }
