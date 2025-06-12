@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "node-fetch": "^2.7.0",
+    "node-pandoc": "^0.3.0"
+  },
+  "name": "bandori-epub-converter",
+  "version": "1.0.0",
+  "description": "Convert BanG Dream!'s stories to EPUB format",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
