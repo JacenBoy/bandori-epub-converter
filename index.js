@@ -9,7 +9,7 @@ const urls = {
   "mainStories": "https://bestdori.com/api/misc/mainstories.5.json",
   "mainAssets": "https://bestdori.com/assets/en/scenario/main_rip/Scenariomain001.asset",
   "bandStories": "https://bestdori.com/api/misc/bandstories.5.json",
-  "bandAssets": "https://bestdori.com/assets/en/scenario/band/001_rip/Scenarioremakestory-01.asset",
+  "bandAssets": "https://bestdori.com/assets/en/scenario/band",
   "events": "https://bestdori.com/api/events/all.5.json",
   "eventStories": "https://bestdori.com/api/events/all.stories.json",
   "eventAssets": "https://bestdori.com/assets/en/scenario/eventstory"
@@ -106,6 +106,46 @@ const makeEpub = (path, title, data) => {
   // -- Band Stories --
   // ------------------
   console.log("Processing Band Stories");
+
+  // Fetch band metadata
+  const bandsData = await fetch(urls.bandStories).then(res => res.json());
+
+  // Create file structure for bands
+  await mkdir("Stories/Band Stories");
+
+  // Loop through the band stories
+  for (const [bandStoryId, bandStory] of Object.entries(bandsData)) {
+    let bandStoryData = "";
+
+    // Create file structure
+    const assetBundle = `assets/bs${bandStoryId}`;
+    await mkdir(assetBundle);
+    await mkdir(`Stories/Band Stories/${bands[bandStory.bandId].replace(badChars.windows, "_")}`);
+
+    // Add story metadata
+    bandStoryData += `% ${bands[bandStory.bandId]} ${bandStory.mainTitle[region]} - ${bandStory.subTitle[region].replace(badChars.markdown, "\\$1")}\n\n`;
+
+    // Several stories are listed multiple times in the metadata
+    // To resolve this, we check if the story had a chapter number
+    // PoPiPa makes this complicated thanks to their Band Story 0
+    if (bandStory.chapterNumber || bandStory.chapterNumber == 0) {
+      try {
+        console.log(`${bandStoryId} - ${bandStory.subTitle[region]}`);
+
+        for (const [storyId, story] of Object.entries(bandStory.stories)) {
+          const episode = await cacheAsset(`${urls.bandAssets}/${String(bandStory.bandId).padStart(3, "0")}_rip/Scenario${story.scenarioId}.asset`, `${assetBundle}/${story.scenarioId}.json`);
+
+          // Process chapter data
+          bandStoryData += `# ${story.caption[region]} - ${story.title[region].replace(badChars.markdown, "\\$1")}\n\n---\n\n`;
+          bandStoryData += processStory(episode.Base);
+        }
+
+        makeEpub(`Stories/Band Stories/${bands[bandStory.bandId].replace(badChars.windows, "_")}`, `${String(bandStory.chapterNumber).padStart(3, "0")} - ${bandStory.subTitle[region]}`, bandStoryData);
+      } catch (ex) {
+        console.error(ex);
+      }
+    }
+  }
 
   // -- Event Stories --
   // -------------------
