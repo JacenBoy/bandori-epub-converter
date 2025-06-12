@@ -94,6 +94,14 @@ const processStory = (story) => {
   for (const [eventId, event] of Object.entries(events)) {
     let eventStoryData = "";
 
+    // Some Band Story events 404 when trying to access them like normal
+    // events for some reason
+    // Bestdori doesn't distinguish normal events and Band Stories, so we
+    // have to exclude them manually like some kind of pleb
+    if ([41, 43, 46, 54, 57, 117, 125, 129, 135, 141, 147, 156, 165, 172, 235].includes(Number(eventId))) {
+      continue;
+    }
+
     // Only process events that have started
     if (event.startAt[region] != null && now >= new Date(Number(event.startAt[1]))) {
       try {
