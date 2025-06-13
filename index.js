@@ -75,7 +75,7 @@ const processStory = (story) => {
         data = story.specialEffectData[snippet.referenceIndex];
         switch (data.effectType) {
           case 8: // Titles
-            if ((!storyData.endsWith("---\n\n") || !storyData.endsWith("--**\n\n")) && storyData != "") {
+            if (!storyData.endsWith("---\n\n") && !storyData.endsWith("--**\n\n") && storyData != "") {
               storyData += "---\n\n";
             }
             storyData += `**-- ${data.stringVal.replace(badChars.markdown, "\\$1")} --**\n\n`;
