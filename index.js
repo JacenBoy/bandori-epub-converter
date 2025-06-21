@@ -28,7 +28,7 @@ const bands = {
 
 const badChars = {
   "windows": /[\<\>\:\"\/\\\|\?\*]/g,
-  "markdown": /([\\\*\_\<\>\(\)\#])/g
+  "markdown": /([\\\*\_\<\>\(\)\#\~])/g
 };
 
 // fileExists()
