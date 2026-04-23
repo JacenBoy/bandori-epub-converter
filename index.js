@@ -12,7 +12,8 @@ const urls = {
   "bandAssets": "https://bestdori.com/assets/en/scenario/band",
   "events": "https://bestdori.com/api/events/all.5.json",
   "eventStories": "https://bestdori.com/api/events/all.stories.json",
-  "eventAssets": "https://bestdori.com/assets/en/scenario/eventstory"
+  "eventAssets": "https://bestdori.com/assets/en/scenario/eventstory",
+  "eventImageAssets": "https://bestdori.com/assets/en/event"
 };
 
 const bands = {
@@ -170,13 +171,26 @@ const makeEpub = (path, title, data) => {
       continue;
     }
 
-    // Only process events that have started
+    // Only process events that have started; other events may have
+    // missing/untranslated data
     if (event.startAt[region] != null && now >= new Date(Number(event.startAt[1]))) {
       try {
         console.log(`${eventId} - ${event.eventName[region]}`);
         // Create a folder for the event
         const assetBundle = `assets/${event.assetBundleName}`
         await mkdir(assetBundle);
+
+        // Download event banner
+        const eventBanner = `${urls.eventImageAssets}/${event.assetBundleName}/images_rip/banner.png`;
+        const bannerPath = `${assetBundle}/${event.assetBundleName}_banner.png`;
+        if (! await fileExists(bannerPath)) {
+          await fetch(eventBanner).then(res => {
+            if (!res.ok) throw new Error(`Failed: ${res.status}`);
+            return res.buffer();
+          }).then(buffer => {
+            fs.writeFile(bannerPath, buffer);
+          });
+        }
 
         // Create story data
         eventStoryData += `% ${event.eventName[region].replace(badChars.markdown, "\\$1")}\n\n`;
