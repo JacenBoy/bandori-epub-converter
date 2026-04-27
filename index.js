@@ -193,7 +193,7 @@ const makeEpub = (path, title, data) => {
         }
 
         // Create story data
-        eventStoryData += `% ${event.eventName[region].replace(badChars.markdown, "\\$1")}\n\n`;
+        eventStoryData += `% ${event.eventName[region].replace(badChars.markdown, "\\$1")}\n\n![](${bannerPath})\n\n`;
         
         // Loop through the story chapters
         for (const story of eventStories[eventId].stories) {
